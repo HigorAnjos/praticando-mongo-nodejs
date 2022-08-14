@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev src/index.ts",
+    "start": "ts-node src/index.ts",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "test": "jest --runInBand --verbose",
+    "test:dev": "mocha -r ts-node/register src/tests/unit/**/*.test.ts --exit -t 60000",
+    "test:coverage": "nyc npm run test:dev"
   },
   "repository": {
     "type": "git",
