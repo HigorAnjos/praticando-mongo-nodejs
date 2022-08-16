@@ -1,4 +1,5 @@
 import express from 'express';
+import errorMiddleware from './middlewares/error.middleware';
 import movieRoutes from './routes/movie.route';
 
 class App {
@@ -7,16 +8,13 @@ class App {
 
   constructor() {
     this.express = express();
-    this.middleware();
-    this.routes();
+    this.config();
   }
 
-  private middleware(): void {
+  private config(): void {
     this.express.use(express.json());
-  }
-
-  private routes(): void {
     this.express.use(movieRoutes);
+    this.express.use(errorMiddleware);
   }
 
   public start(port: number | string = 3001) {

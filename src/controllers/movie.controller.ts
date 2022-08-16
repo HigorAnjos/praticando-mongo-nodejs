@@ -1,21 +1,68 @@
-import { Request, Response } from 'express';
-import MovieService from '../services/movie.service';
+import { Request, Response, NextFunction } from "express";
+import IMovieService from "../services/interface/movie.service";
+// import MovieService from '../services/movie.service';
+import IMovieController from './interface/movie.controller';
 
-class MovieController {
-  private movieService: MovieService;
+class MovieController implements IMovieController {
+  private _movieService: IMovieService
 
-  constructor() {
-    this.movieService = new MovieService();
+  constructor(movieService: IMovieService) {
+    this._movieService = movieService;
   }
 
-  public async insertMovie(req: Request, res: Response): Promise<Response> {
-    const movie = await this.movieService.insertMovie(req.body);
-    return res.status(201).json(movie);
-  }
+  public async create(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    try {
+      const { title, year, classification, starring, director, genres, length } = req.body;
+      const movieCreated = await this._movieService.create({ 
+        title, year, classification, starring, director, genres, length
+      });
 
-  public async getMovies(req: Request, res: Response): Promise<Response> {
-    const movies = await this.movieService.getMovies();
-    return res.status(200).json(movies);
+      return res.status(201).json(movieCreated);
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async updateById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    try {
+      const { id } = req.params;
+      const { title, year, classification, starring, director, genres, length } = req.body;
+      const movieUpdated = await this._movieService.updateById(id, {
+        title, year, classification, starring, director, genres, length
+      });
+
+      return res.status(200).json(movieUpdated);
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async deleteById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    try {
+      const { id } = req.params;
+      const movieDeleted = await this._movieService.deleteById(id);
+
+      return res.status(200).json(movieDeleted);
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async findAll(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    try {
+      const movies = await this._movieService.findAll();
+
+      return res.status(200).json(movies);
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async findById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    try {
+      const { id } = req.params;
+      const movie = await this._movieService.findById(id);
+
+      return res.status(200).json(movie);
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

@@ -1,21 +1,11 @@
 import { IMovie, movieMongooseModel } from './schemas/movie.schema';
 import { Model } from 'mongoose';
+import GenericModel from './generic.model';
+import IMovieModel from './interfaces/movie.model';
 
-class MovieModel {
-  private movieMongooseModel: Model<IMovie>;
-
-  constructor() {
-    this.movieMongooseModel = movieMongooseModel
-  }
-
-  public async insertMovie(movie: IMovie): Promise<IMovie | null> {
-    const movieCreated = await this.movieMongooseModel.create(movie);
-    return movieCreated;
-  }
-
-  public async getMovies(): Promise<IMovie[] | null> {
-    const movies = await this.movieMongooseModel.find();
-    return movies;
+class MovieModel extends GenericModel<IMovie> implements IMovieModel {
+  constructor(modelMongoose: Model<IMovie>) {
+    super(modelMongoose);
   }
 }
 
