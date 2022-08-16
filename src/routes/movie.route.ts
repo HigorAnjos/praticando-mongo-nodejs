@@ -1,36 +1,18 @@
 import { Router } from 'express';
 import MovieController from '../controllers/movie.controller';
+import MovieModel from '../models/movie.model';
+import { movieMongooseModel } from '../models/schemas/movie.schema';
+import MovieServices from '../services/movie.service';
 
 const movieRoutes = Router();
 
-const movieController = new MovieController();
+const movieModel = new MovieModel(movieMongooseModel);
+const movieService = new MovieServices(movieModel);
+const movieController = new MovieController(movieService);
 
-movieRoutes.get('/movies', (req, res) => movieController.getMovies(req, res));
-// movieRoutes.get('/movies/year/:year', (req, res) => {});
-movieRoutes.post('/movies', (req, res) => movieController.insertMovie(req, res));
+movieRoutes.get('/movies', (req, res, next) => movieController.findAll(req, res, next));
+movieRoutes.post('/movies', (req, res, next) => movieController.create(req, res, next));
 // movieRoutes.put('/movies/:id', (req, res) => {});
 // movieRoutes.delete('/movies/:id', (req, res) => {});
 
 export default movieRoutes;
-
-// postman insert movie:
-// {
-//   "title": "Twilight",
-//   "year": 2008,
-//   "classification": 12,
-//   "starring": [
-//       "Kristen Stewart",
-//       "Robert Pattinson",
-//       "Billy Burke"
-//   ],
-//   "director": "Catherine Hardwicke",
-//   "genres": [
-//       "teen",
-//       "book-based",
-//       "action",
-//       "adventure"
-//   ],
-//   "length": 121,
-//   "_id": "62f9978d69d5212e0d79649e",
-//   "__v": 0
-// }
